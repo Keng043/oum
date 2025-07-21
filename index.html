@@ -1,0 +1,82 @@
+<!-- index.html (หน้าแรก) -->
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Letter</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #ffe6e6, #ffffff);
+      font-family: 'Prompt', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+    .container {
+      max-width: 90%;
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    .question {
+      font-size: 1.5rem;
+      margin-bottom: 2rem;
+      color: #444;
+    }
+    .btn {
+      background: #ff9aa2;
+      border: none;
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      color: white;
+      border-radius: 10px;
+      margin: 0.5rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .btn:hover {
+      background: #ff6f91;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div id="question-box" class="question">
+      พี่เคยรู้ไหม...  
+      ว่าแค่รอยยิ้มของพี่  
+      ก็ทำให้ใครบางคน...ยิ้มได้ทั้งวัน
+    </div>
+    <div id="buttons">
+      <button class="btn" onclick="nextQuestion()">ต่อไป</button>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      "ตั้งแต่วันแรกจนถึงวันนี้พี่รู้สึกอะไรกับผมบ้าง?   พี่เคยรู้ไหม... ว่าแค่รอยยิ้มของพี่ ก็ทำให้ใครบางคนยิ้มได้ทั้งวัน",
+      "กดต่อไปอีกนิดดดดด",
+      "พร้อมยัง!! ไปต่อกันเลยยยยย",
+    ];
+
+    let index = 0;
+
+    function nextQuestion() {
+      index++;
+      if (index < questions.length) {
+        document.getElementById('question-box').textContent = questions[index];
+      } else {
+        // เปลี่ยนหน้าไปยังจดหมายสารภาพรัก
+        window.location.href = "Letter.html"; // ใช้ชื่อไฟล์ของหน้าจดหมายจริง
+      }
+    }
+  </script>
+
+</body>
+</html>

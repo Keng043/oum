@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>จดหมายจากใจ 💌</title>
+  <link href="https://fonts.googleapis.com/css2?family=Itim&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: url('/img.png') no-repeat center center fixed;
+      background-size: cover; /* เปลี่ยนกลับเป็น cover เพื่อให้ภาพเต็มหน้าจอ */
+      font-family: 'Itim', cursive;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.5); /* ปรับความจางของพื้นหลัง */
+      z-index: 0;
+    }
+
+
+
+    /* ซองจดหมายใหญ่ กลางจอ */
+    .envelope-wrapper {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 350px;      /* เพิ่มขนาด */
+      height: 220px;     /* เพิ่มขนาด */
+      cursor: pointer;
+      animation: floatUp 1.2s ease-out forwards;
+      transition: all 0.5s ease;
+      z-index: 1000;
+      transform: translate(-50%, -50%);
+    }
+
+    /* ย้ายซองไปมุมล่างซ้ายและเล็กลง */
+    .envelope-wrapper.minimized {
+      width: 70px;
+      height: 45px;
+      top: auto;
+      bottom: 20px;
+      left: 20px;
+      animation: none;
+      transform: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      border-radius: 8px;
+      background: #ffc0cb;
+      border: 2px solid #e91e63;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* รูปร่างซอง */
+    .envelope {
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      position: relative;
+      border: 2px solid #e91e63;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      clip-path: polygon(0 40%, 50% 0, 100% 40%, 100% 100%, 0 100%);
+      transition: all 0.4s ease-in-out;
+      z-index: 2;
+    }
+
+    .envelope::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60%;
+      background: #f06292;
+      clip-path: polygon(0 0, 50% 100%, 100% 0);
+      z-index: 3;
+      transition: transform 0.6s ease;
+      transform-origin: top;
+    }
+
+    /* ฝาเปิด */
+    .envelope.open::before {
+      transform: rotateX(180deg);
+    }
+
+    /* เนื้อจดหมาย popup */
+    .letter-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      width: 600px;           /* เดิม 400px → ใหญ่ขึ้น */
+      background: #fff;
+      padding: 48px 40px;     /* เดิม 28px → ใหญ่ขึ้น */
+      border-radius: 18px;    /* เดิม 12px → ใหญ่ขึ้น */
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3); /* เงาใหญ่ขึ้น */
+      z-index: 1500;
+      opacity: 0;
+      transition: all 0.5s ease;
+      text-align: center;
+      font-size: 2.2rem;      /* เดิม 22px → ใหญ่ขึ้น */
+      line-height: 1.7;       /* เพิ่มความอ่านง่าย */
+    }
+
+    .letter-popup.show {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+
+    /* ไอคอนซองเล็กที่มุม */
+    .mini-envelope-icon {
+      width: 100px;      /* เดิม 40px */
+      height: 80px;     /* เดิม 26px */
+      background: #fff;
+      border: 2px solid #e91e63;
+      clip-path: polygon(0 40%, 50% 0, 100% 40%, 100% 100%, 0 100%);
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      display: none;
+      z-index: 1600;
+      transition: transform 0.3s ease;
+    }
+    .mini-envelope-icon:hover {
+      transform: scale(1.1);
+    }
+    /* เพิ่มปุ่มควบคุมเพลงใน popup */
+    .music-controls {
+      margin-top: 15px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+    .music-btn {
+      background: #e91e63;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      width: 56px;      /* เดิม 32px */
+      height: 56px;     /* เดิม 32px */
+      font-size: 2rem;  /* เดิม 16px */
+      cursor: pointer;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+      transition: background-color 0.3s ease;
+    }
+    .music-btn:hover {
+      background: #c2185b;
+        }
+      @keyframes fadeOut {
+      0% {
+        opacity: 0.8;
+        transform: translateY(0);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- ซองใหญ่ -->
+  <div class="envelope-wrapper" id="envelopeWrapper" >
+    <div class="envelope" id="envelope"></div>
+  </div>
+
+  <!-- จดหมาย popup -->
+  <div class="letter-popup" id="letterPopup">
+    <p>สวัสดีจากใจฉัน 💖<br>พี่อุ้มจำได้ไหม... ว่าวันที่ 21 เดือนที่แล้ว เราได้เจอกันเป็นครั้งแรก
+        ไม่รู้ว่าเป็นเพราะความบังเอิญ หรือเพราะอะไร
+        แต่ตั้งแต่วันนั้น จนถึงวันนี้... ความรู้สึกในใจผมมันค่อย ๆ เพิ่มขึ้นเรื่อย ๆ
+          ผมไม่รู้ว่าพี่คิดแบบเดียวกันไหม
+          ผมไม่รู้ว่าพี่มีคนในใจอยู่หรือเปล่า
+          แต่ที่รู้แน่ ๆ คือ ตั้งแต่รู้จักพี่ ผมไม่เคยรู้สึกว่าตัวเองมีค่าแบบนี้มาก่อนเลยมันทำให้ผมอยากทำให้อีกเยอะๆและต่อไปเรื่อยๆ
+          สิ่งที่ผมพยายามทำอาจดูเป็นเรื่องเล็ก ๆ แต่ถ้าพีมันทำให้พี่ยิ้มได้ผมก็ชื้นใจละ
+          มันกลับกลายเป็นสิ่งที่ผมอยากจะทำให้มากขึ้นไปอีก — ซ้ำแล้วซ้ำเล่า
+          ผมหวังว่าพี่จะ “รับ” ความรู้สึกนี้ไว้นะครับ
+          ตลอดเวลาที่ผ่านมา ผมไม่ค่อยได้เป็นตัวของตัวเองเท่าไหร่
+          …จนกระทั่งพี่เข้ามา
+          ทุกวันนี้ ผมรู้สึกดีสุด ๆ อยากมีพี่อยู่ตรงนี้ไปเรื่อยๆ
+          หวังว่าพี่จะอยู่ตรงนี้ไปนานๆ ไม่ทำร้ายหัวใจดวงน้อย ๆ ที่พึ่งกลับมา “ฮีล” อีกครั้ง
+
+          <br>— by น้องเก่ง</p>
+    <div class="music-controls">
+      <button id="prevSongBtn" class="music-btn" title="เพลงก่อนหน้า">⏮️</button>
+      <button id="playPauseBtn" class="music-btn" title="เล่น / หยุดเพลง">⏸️</button>
+      <button id="nextSongBtn" class="music-btn" title="เพลงถัดไป">⏭️</button>
+    </div>
+  </div>
+
+  <!-- ไอคอนซองเล็ก -->
+  <div class="mini-envelope-icon" id="miniEnvelopeIcon" title="เปิดจดหมาย"></div>
+
+  <!-- เพลง -->
+  
+  <audio id="bgMusic" preload="auto"></audio>
+    <source src="sound/pun.mp3" type="audio/mpeg" />
+    <source src="sound/ข้างกาย.mp3" type="audio/mpeg" />
+    <source src="sound/Please be true.mp3" type="audio/mpeg" />
+    <source src="sound/Over & Over.mp3" type="audio/mpeg" />
+  </audio>
+
+<script>
+  // ตัวแปร element
+  const envelopeWrapper = document.getElementById("envelopeWrapper");
+  const envelope = document.getElementById("envelope");
+  const letterPopup = document.getElementById("letterPopup");
+  const miniIcon = document.getElementById("miniEnvelopeIcon");
+  const bgMusic = document.getElementById("bgMusic");
+  const playPauseBtn = document.getElementById("playPauseBtn");
+  const nextSongBtn = document.getElementById("nextSongBtn");
+  const prevSongBtn = document.getElementById("prevSongBtn");
+
+  // รายการเพลง
+  const playlist = [
+    "sound/pun.mp3",
+    "sound/ข้างกาย.mp3",
+    "sound/Please be true.mp3",
+    "sound/Over & Over.mp3",
+  ];
+
+  let currentSongIndex = 0;
+
+  // โหลดเพลงจาก playlist
+  function loadSong(index) {
+    currentSongIndex = index % playlist.length;
+    if (currentSongIndex < 0) currentSongIndex = playlist.length - 1; // ถ้าติดลบ
+    bgMusic.src = playlist[currentSongIndex];
+    bgMusic.load();
+  }
+
+  // เล่นเพลง
+  function playMusic() {
+    bgMusic.play().catch(err => console.error("Play error:", err));
+    playPauseBtn.textContent = "⏸️";
+  }
+
+  // หยุดเพลง
+  function pauseMusic() {
+    bgMusic.pause();
+    playPauseBtn.textContent = "▶️";
+  }
+
+  // เล่นเพลงถัดไป
+  function nextSong() {
+    currentSongIndex++;
+    loadSong(currentSongIndex);
+    playMusic();
+  }
+
+  // เล่นเพลงก่อนหน้า
+  function prevSong() {
+    currentSongIndex--;
+    loadSong(currentSongIndex);
+    playMusic();
+  }
+
+
+    // เมื่อเพลงจบ ให้เล่นเพลงถัดไปอัตโนมัติ
+  bgMusic.addEventListener("ended", () => {
+    nextSong();
+  });
+
+    // โหลดเพลงแรกเมื่อหน้าโหลด
+  window.addEventListener("load", () => {
+    loadSong(currentSongIndex);
+  });
+
+  // สลับเล่น/หยุดเพลงเมื่อกดปุ่ม play/pause
+  playPauseBtn.addEventListener("click", () => {
+    if (bgMusic.paused) {
+      playMusic();
+    } else {
+      pauseMusic();
+    }
+  });
+
+  // ปุ่มเล่นเพลงถัดไป
+  nextSongBtn.addEventListener("click", nextSong);
+
+  // ปุ่มเล่นเพลงก่อนหน้า
+  prevSongBtn.addEventListener("click", prevSong);
+
+  // เมื่อเพลงจบ ให้เล่นเพลงถัดไปอัตโนมัติ <-- จุดแก้ไขที่สำคัญ
+  bgMusic.addEventListener("ended", () => {
+    nextSong();
+  });
+
+  // โหลดเพลงแรกเมื่อหน้าโหลดเสร็จ
+  window.addEventListener("load", () => {
+    loadSong(currentSongIndex);
+  });
+
+  // เปิดซองและ popup พร้อมเล่นเพลง
+  envelopeWrapper.addEventListener("click", (e) => {
+    e.stopPropagation();
+    envelope.classList.add("open");
+    letterPopup.classList.add("show");
+    if (bgMusic.paused) playMusic();
+    miniIcon.style.display = "none";
+    envelopeWrapper.classList.remove("minimized");
+  });
+
+  // คลิกไอคอนเล็ก เปิดซองและ popup + เพลงยังเล่น
+  miniIcon.addEventListener("click", (e) => {
+    e.stopPropagation();
+    envelopeWrapper.classList.remove("minimized");
+    envelope.classList.add("open");
+    letterPopup.classList.add("show");
+    if (bgMusic.paused) playMusic();
+    miniIcon.style.display = "none";
+  });
+
+  // คลิกพื้นที่ว่าง ปิด popup + ย้ายซองเป็นไอคอนเล็ก
+  document.body.addEventListener("click", (e) => {
+    if (letterPopup.classList.contains("show")) {
+      if (!letterPopup.contains(e.target) && !envelopeWrapper.contains(e.target) && !miniIcon.contains(e.target)) {
+        letterPopup.classList.remove("show");
+        envelope.classList.remove("open");
+        envelopeWrapper.classList.add("minimized");
+        miniIcon.style.display = "block";
+      }
+    }
+  });
+
+  let debounceTimeout;
+  document.addEventListener("mousemove", function(e) {
+    clearTimeout(debounceTimeout);
+    debounceTimeout = setTimeout(function() {
+      const heart = document.createElement("div");
+      heart.textContent = "❤️";
+      heart.style.position = "absolute";
+      // ปรับให้อยู่กลาง pointer โดยลบค่าครึ่งขนาดตัวอักษรออก (ประมาณ 12px)
+      heart.style.left = (e.pageX - 12) + "px";
+      heart.style.top = (e.pageY - 12) + "px";
+      heart.style.fontSize = "1.2rem";
+      heart.style.opacity = 0.8;
+      heart.style.pointerEvents = "none"; // ไม่ให้รบกวนเมาส์
+      heart.style.animation = "fadeOut 1s forwards";
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 1000); // ลบหลังจาก 1 วินาที
+    }, 100);  // หน่วงเวลาให้แสดงแค่ครั้งเดียวทุก 100 มิลลิวินาที
+  });
+
+</script>
+
+</body>
+</html>
