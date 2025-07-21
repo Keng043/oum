@@ -9,7 +9,7 @@
       margin: 0;
       padding: 0;
       background: url('img.png') no-repeat center center fixed;
-      background-size: cover; /* เปลี่ยนกลับเป็น cover เพื่อให้ภาพเต็มหน้าจอ */
+      background-size: cover; /* ให้ภาพเต็มหน้าจอ */
       font-family: 'Itim', cursive;
       height: 100vh;
       overflow: hidden;
@@ -23,19 +23,17 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(255, 255, 255, 0.5); /* ปรับความจางของพื้นหลัง */
+      background-color: rgba(255, 255, 255, 0.5); /* ความจางของพื้นหลัง */
       z-index: 0;
     }
-
-
 
     /* ซองจดหมายใหญ่ กลางจอ */
     .envelope-wrapper {
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 350px;      /* เพิ่มขนาด */
-      height: 220px;     /* เพิ่มขนาด */
+      width: 350px;      
+      height: 220px;     
       cursor: pointer;
       animation: floatUp 1.2s ease-out forwards;
       transition: all 0.5s ease;
@@ -100,17 +98,18 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%) scale(0);
-      width: 600px;           /* เดิม 400px → ใหญ่ขึ้น */
-      background: #fff;
-      padding: 48px 40px;     /* เดิม 28px → ใหญ่ขึ้น */
-      border-radius: 18px;    /* เดิม 12px → ใหญ่ขึ้น */
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3); /* เงาใหญ่ขึ้น */
+      width: 600px;
+      background: rgba(255, 255, 255, 0.7); /* พื้นหลังจางลง */
+      padding: 48px 40px;
+      border-radius: 18px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
       z-index: 1500;
       opacity: 0;
       transition: all 0.5s ease;
       text-align: center;
-      font-size: 2.2rem;      /* เดิม 22px → ใหญ่ขึ้น */
-      line-height: 1.7;       /* เพิ่มความอ่านง่าย */
+      font-size: 2.2rem;
+      line-height: 1.7;
+      backdrop-filter: blur(8px); /* เพิ่มความนุ่มนวลให้พื้นหลังจดหมาย */
     }
 
     .letter-popup.show {
@@ -120,8 +119,8 @@
 
     /* ไอคอนซองเล็กที่มุม */
     .mini-envelope-icon {
-      width: 100px;      /* เดิม 40px */
-      height: 80px;     /* เดิม 26px */
+      width: 100px;
+      height: 80px;
       background: #fff;
       border: 2px solid #e91e63;
       clip-path: polygon(0 40%, 50% 0, 100% 40%, 100% 100%, 0 100%);
@@ -137,7 +136,8 @@
     .mini-envelope-icon:hover {
       transform: scale(1.1);
     }
-    /* เพิ่มปุ่มควบคุมเพลงใน popup */
+
+    /* ปุ่มควบคุมเพลง */
     .music-controls {
       margin-top: 15px;
       display: flex;
@@ -149,17 +149,18 @@
       color: white;
       border: none;
       border-radius: 25px;
-      width: 56px;      /* เดิม 32px */
-      height: 56px;     /* เดิม 32px */
-      font-size: 2rem;  /* เดิม 16px */
+      width: 56px;
+      height: 56px;
+      font-size: 2rem;
       cursor: pointer;
       box-shadow: 0 3px 8px rgba(0,0,0,0.3);
       transition: background-color 0.3s ease;
     }
     .music-btn:hover {
       background: #c2185b;
-        }
-      @keyframes fadeOut {
+    }
+
+    @keyframes fadeOut {
       0% {
         opacity: 0.8;
         transform: translateY(0);
@@ -169,7 +170,6 @@
         transform: translateY(-20px);
       }
     }
-
   </style>
 </head>
 <body>
@@ -207,13 +207,7 @@
   <div class="mini-envelope-icon" id="miniEnvelopeIcon" title="เปิดจดหมาย"></div>
 
   <!-- เพลง -->
-  
   <audio id="bgMusic" preload="auto"></audio>
-    <source src="sound/pun.mp3" type="audio/mpeg" />
-    <source src="sound/ข้างกาย.mp3" type="audio/mpeg" />
-    <source src="sound/Please be true.mp3" type="audio/mpeg" />
-    <source src="sound/Over & Over.mp3" type="audio/mpeg" />
-  </audio>
 
 <script>
   // ตัวแปร element
@@ -239,7 +233,7 @@
   // โหลดเพลงจาก playlist
   function loadSong(index) {
     currentSongIndex = index % playlist.length;
-    if (currentSongIndex < 0) currentSongIndex = playlist.length - 1; // ถ้าติดลบ
+    if (currentSongIndex < 0) currentSongIndex = playlist.length - 1;
     bgMusic.src = playlist[currentSongIndex];
     bgMusic.load();
   }
@@ -270,13 +264,12 @@
     playMusic();
   }
 
-
-    // เมื่อเพลงจบ ให้เล่นเพลงถัดไปอัตโนมัติ
+  // เมื่อเพลงจบ ให้เล่นเพลงถัดไปอัตโนมัติ
   bgMusic.addEventListener("ended", () => {
     nextSong();
   });
 
-    // โหลดเพลงแรกเมื่อหน้าโหลด
+  // โหลดเพลงแรกเมื่อหน้าโหลด
   window.addEventListener("load", () => {
     loadSong(currentSongIndex);
   });
@@ -296,15 +289,7 @@
   // ปุ่มเล่นเพลงก่อนหน้า
   prevSongBtn.addEventListener("click", prevSong);
 
-  // เมื่อเพลงจบ ให้เล่นเพลงถัดไปอัตโนมัติ <-- จุดแก้ไขที่สำคัญ
-  bgMusic.addEventListener("ended", () => {
-    nextSong();
-  });
-
-  // โหลดเพลงแรกเมื่อหน้าโหลดเสร็จ
-  window.addEventListener("load", () => {
-    loadSong(currentSongIndex);
-  });
+  let hasTyped = false;
 
   // เปิดซองและ popup พร้อมเล่นเพลง
   envelopeWrapper.addEventListener("click", (e) => {
@@ -345,18 +330,16 @@
       const heart = document.createElement("div");
       heart.textContent = "❤️";
       heart.style.position = "absolute";
-      // ปรับให้อยู่กลาง pointer โดยลบค่าครึ่งขนาดตัวอักษรออก (ประมาณ 12px)
       heart.style.left = (e.pageX - 12) + "px";
       heart.style.top = (e.pageY - 12) + "px";
       heart.style.fontSize = "1.2rem";
       heart.style.opacity = 0.8;
-      heart.style.pointerEvents = "none"; // ไม่ให้รบกวนเมาส์
+      heart.style.pointerEvents = "none";
       heart.style.animation = "fadeOut 1s forwards";
       document.body.appendChild(heart);
-      setTimeout(() => heart.remove(), 1000); // ลบหลังจาก 1 วินาที
-    }, 100);  // หน่วงเวลาให้แสดงแค่ครั้งเดียวทุก 100 มิลลิวินาที
+      setTimeout(() => heart.remove(), 1000);
+    }, 60);
   });
-
 </script>
 
 </body>
